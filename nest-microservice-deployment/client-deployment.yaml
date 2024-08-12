@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: omkarnanda/client
+          ports:
+            - containerPort: 9000
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m      
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-service
+spec:
+  selector:
+    app: client  # Match the label used in your Deployment
+  ports:
+    - protocol: TCP
+      port: 9000  # The port your application is listening on in the container
+      targetPort: 9000  # The port your application is listening on in the pod
+      nodePort: 30222
+  type: LoadBalancer  # Use LoadBalancer type to expose externally
+  
